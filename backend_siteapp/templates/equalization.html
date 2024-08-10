@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>СравниPrice</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+  const cityLinks = document.querySelectorAll('.city-link');
+  const selectedCityElement = document.getElementById('selectedCity');
+
+  cityLinks.forEach(function(cityLink) {
+    cityLink.addEventListener('click', function(event) {
+      event.preventDefault();
+      const selectedCity = this.getAttribute('data-city');
+      setCookie('selected_city', selectedCity, 10);
+      displaySelectedCity(selectedCity);
+    });
+  });
+
+  // Функция для установки куки
+  function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = 'expires=' + date.toUTCString();
+    document.cookie = name + '=' + value + ';' + expires + ';path=/';
+  }
+
+  // Функция для получения куки
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift();
+    }
+  }
+
+  // Функция для отображения выбранного города
+  function displaySelectedCity(city) {
+    if (selectedCityElement) {
+      selectedCityElement.textContent = city;
+    }
+  }
+
+  // Получаем выбранный город из куки при загрузке страницы
+  const selectedCityFromCookie = getCookie('selected_city');
+  if (selectedCityFromCookie) {
+    displaySelectedCity(selectedCityFromCookie);
+  }
+});
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <div class="header__container">
+          <div class="header__wrapper">
+            <div class="header-left">
+              <a href="index.html" class="logo"
+                ><img src="/static/img/logo.svg" alt="logo"
+              ></a>
+              <button class="header__button button open-catalog">
+                <span class="open-catalog__icon">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </span>
+                <span class="button__text">Каталог</span>
+              </button>
+
+              <div class="location">
+                <div class="location__icon">
+                  <img src="/static/img/icons/location-icon.svg" alt="location" >
+                </div>
+                <span class="location__text">Ваш город: </span>
+                <span class="location__lacate open-popup-location" id="selectedCity">Минск</span>
+
+                <div class="location-question popup">
+                  <div class="location-question__wrapper">
+                    <button class="popup__close-btn popup-close">
+                      <span></span>
+                      <span></span>
+                    </button>
+
+                    <h3 class="location-question__title">
+                      <span>Ваш город </span>
+                      <span class="location-question__locate">Минск?</span>
+                    </h3>
+                    <div class="location-question__buttons">
+                      <button
+                        class="location-question__button button popup-close">
+                        Да, спасибо
+                      </button>
+                      <button
+                        class="location-question__button location-question__button_grey popup-close change-city-btn">
+                        Нет, другой
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="header-search search-field">
+              <input
+                type="text"
+                class="search-field__input"
+                placeholder="Например, ноутбук Assus" >
+              <button class="search-field__button">
+                <img src="/static/img/icons/search-icon.svg" alt="search" >
+              </button>
+            </div>
+
+            <div class="user-actions">
+              <a href="#" class="user-actions-point user-actions-point_num">
+                <span class="user-actions-point__icon">
+                  <img src="/static/img/icons/equel-icon.svg" alt="comparison" >
+                </span>
+                <h3 class="user-actions-point__title">Сравнение</h3>
+              </a>
+              <a href="#" class="user-actions-point user-actions-point_num">
+                <span class="user-actions-point__icon">
+                  <img src="/static/img/icons/favorite-icon.svg" alt="favorite" >
+                </span>
+                <h3 class="user-actions-point__title">Избранное</h3>
+              </a>
+            </div>
+
+            <div class="status-popup status-popup_green popup">
+              <div class="status-popup__wrapper">
+                <button class="popup__close-btn popup-close">
+                  <span></span>
+                  <span></span>
+                </button>
+
+                <p class="status-popup__paragraph">
+                  Товар успешно добавлен в сравнение
+                </p>
+              </div>
+            </div>
+            <div class="status-popup status-popup_red popup">
+              <div class="status-popup__wrapper">
+                <button class="popup__close-btn popup-close">
+                  <span></span>
+                  <span></span>
+                </button>
+
+                <p class="status-popup__paragraph">
+                  Ошибка! Не удалось добавить товар
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main class="main">
+        <div class="main__breadcrumbs breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+          <div class="breadcrumbs__container">
+            <div class="breadcrumbs__wrapper">
+              <span class="breadcrumbs__crumb" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a href="index.html" itemprop="item" itemscope itemtype="https://schema.org/WebPage">
+                  <span itemprop="name">Главная</span>
+                </a>
+                <meta itemprop="position" content="1" >
+              </span>
+              <span class="breadcrumbs__crumb" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a href="category.html" itemprop="item" itemscope itemtype="https://schema.org/WebPage">
+                  <span itemprop="name">Категория</span>
+                </a>
+                <meta itemprop="position" content="2" >
+              </span>
+              <span class="breadcrumbs__crumb breadcrumbs__crumb_current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <span itemprop="name">Подкатегория с товарами</span>
+                <meta itemprop="position" content="3" >
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <section class="main__equal equal">
+          <div class="equal__container">
+            <div class="equal__wrapper">
+                <h1 class="equal__title title title_first">Сравнение товаров</h1>
+
+                <div class="equal__categories categories-eq">
+                    <div class="categories-eq__category categories-eq__category_active">
+                        Планшеты 3
+                    </div>
+                    <div class="categories-eq__category">
+                        Бытовая техника 2
+                    </div>
+                </div>
+                <div class="equal-scroll-marker"></div>
+                <div class="equal__header">
+                  <div class="equal__aside">
+                    <div class="equal__aside-body">
+                      <div class="spoiler active">
+                          <div class="spoiler__header">
+                              <h3 class="spoiler__title">Показывать</h3>
+
+                              <div class="spoiler__icon">
+                                  <svg
+                                      width="20"
+                                      height="20"
+                                      viewBox="0 0 20 20"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg">
+                                      <path
+                                      d="M12.8334 11.7667L9.00841 15.5917C8.85228 15.7469 8.64107 15.834 8.42091 15.834C8.20076 15.834 7.98955 15.7469 7.83341 15.5917C7.75531 15.5142 7.69331 15.422 7.651 15.3205C7.6087 15.2189 7.58691 15.11 7.58691 15C7.58691 14.89 7.6087 14.7811 7.651 14.6795C7.69331 14.578 7.75531 14.4858 7.83341 14.4083L11.6667 10.5917C11.7449 10.5142 11.8068 10.422 11.8492 10.3205C11.8915 10.2189 11.9132 10.11 11.9132 9.99999C11.9132 9.88998 11.8915 9.78106 11.8492 9.67951C11.8068 9.57796 11.7449 9.48579 11.6667 9.40832L7.83341 5.59165C7.67649 5.43584 7.5879 5.22407 7.58712 5.00294C7.58633 4.7818 7.67343 4.56941 7.82925 4.41249C7.98506 4.25557 8.19683 4.16697 8.41797 4.16619C8.6391 4.16541 8.85149 4.25251 9.00841 4.40832L12.8334 8.23332C13.3016 8.70207 13.5645 9.33749 13.5645 9.99999C13.5645 10.6625 13.3016 11.2979 12.8334 11.7667V11.7667Z"
+                                      fill="#A5ABB7" />
+                                  </svg>
+                              </div>
+                          </div>
+                          <div class="spoiler__body radio-parent">
+                              <div class="radio">
+                                  <input
+                                      type="radio"
+                                      class="radio__input"
+                                      id="radio1"
+                                      checked
+                                      name="filter-radio" >
+                                  <label
+                                      for="radio1"
+                                      class="radio__custom-input"></label>
+
+                                  <label for="radio1" class="radio__label"
+                                      >Все характеристики</label
+                                  >
+                              </div>
+                              <div class="radio">
+                                  <input
+                                      type="radio"
+                                      class="radio__input"
+                                      id="radio2"
+                                      name="filter-radio" >
+                                  <label
+                                      for="radio2"
+                                      class="radio__custom-input"></label>
+
+                                  <label for="radio2" class="radio__label"
+                                      >Только различия</label
+                                  >
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="add-prod">
+                        <div class="add-prod__icon">
+                            <img src="/static/img/icons/plus-icon.svg" alt="">
+                        </div>
+                        <span class="add-prod__text">Добавить товар</span>
+                    </div>
+                  </div>
+                  <div class="equal__header-body slider-parent" data-current-slide="0">
+                    <div class="equal-prod-list">
+                      <div class="equal-prod-list__wrapper slider-init slider-wrapper">
+                        {% for product, stats in equaliz_products.items %}
+                        <div class="product-card slider-slide equal-prod-list__card">
+                          <div class="product-card__top">
+                            <a href="{% url 'product' product.id %}" class="product-card__preview">
+                              <img src="{{ product.images.url }}" alt="">
+                            </a>
+
+                            <div class="product-status">
+                              {% if product.new %}
+                              <div
+                                class="product-status__label product-status__label_green">
+                                new
+                              </div>
+                              {% endif %}
+                              {% if product.xit %}
+                              <div
+                                class="product-status__label product-status__label_orange">
+                                хит
+                              </div>
+                              {% endif %}
+                            </div>
+                            <div class="product-actions product-actions_big">
+                              <button class="product-actions__button fav-button {% if product.id in request.session.favorites %}active{% endif %}" onclick="window.location.href='{% url 'toggle_favorite' product.id %}'">
+                                <svg
+                                  width="23"
+                                  height="21"
+                                  viewBox="0 0 23 21"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg">
+                                  <path
+                                    d="M16.4834 0.403503C15.4231 0.420108 14.3859 0.718115 13.4765 1.26743C12.5672 1.81674 11.8179 2.59792 11.3043 3.53205C10.7908 2.59792 10.0415 1.81674 9.13219 1.26743C8.22284 0.718115 7.18562 0.420108 6.12528 0.403503C4.43496 0.477442 2.84241 1.22191 1.69556 2.47426C0.548699 3.7266 -0.0592386 5.38503 0.00455862 7.08723C0.00455862 11.398 4.51129 16.106 8.29107 19.2981C9.13499 20.0121 10.202 20.4035 11.3043 20.4035C12.4067 20.4035 13.4737 20.0121 14.3176 19.2981C18.0974 16.106 22.6041 11.398 22.6041 7.08723C22.6679 5.38503 22.06 3.7266 20.9131 2.47426C19.7663 1.22191 18.1737 0.477442 16.4834 0.403503Z"
+                                    fill="#A5ABB7" />
+                                </svg>
+                              </button>
+                              <button
+                                class="product-actions__button eq-rm-button" onclick="window.location.href='{% url 'toggle_equaliz' product.id %}'">
+                                <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0_543_689)">
+                                        <path d="M7.45724 0H7.74347C8.14308 0.0166016 8.54133 0.0515625 8.9382 0.104883C9.1259 0.130273 9.25822 0.160645 9.33517 0.195996C9.62814 0.330762 9.84054 0.691406 9.86398 0.996387C9.87414 1.12744 9.88576 1.25859 9.89884 1.38984C9.89932 1.39418 9.90132 1.39821 9.90448 1.40121C9.90765 1.40421 9.91177 1.406 9.91613 1.40625C10.7203 1.45459 11.5239 1.52256 12.3182 1.65703C12.6928 1.72051 12.9915 1.90527 13.2144 2.21133C13.4575 2.54561 13.4657 2.90449 13.5082 3.28887C13.5358 3.53691 13.4616 3.73691 13.2859 3.88887C13.0902 4.05791 12.8839 4.06729 12.6027 4.05381C9.15129 3.89092 5.69992 3.8918 2.24855 4.05645C1.9548 4.07031 1.73283 3.96328 1.58263 3.73535C1.4757 3.57305 1.47658 3.39727 1.50265 3.18574C1.52521 3.00352 1.54045 2.78965 1.58468 2.63115C1.72882 2.1167 2.16359 1.73262 2.69591 1.65234C3.55822 1.52246 4.42521 1.43662 5.29689 1.39482C5.30149 1.39469 5.30587 1.39284 5.30917 1.38964C5.31248 1.38644 5.31447 1.38213 5.31476 1.37754C5.32297 1.2623 5.33224 1.14502 5.34259 1.02568C5.37922 0.60498 5.65607 0.180762 6.10021 0.118945C6.55099 0.0560547 7.00334 0.0164063 7.45724 0Z" fill="#363436"/>
+                                        <path d="M7.6312 15.0002H7.30835C6.85337 14.987 6.40777 14.9817 5.95542 14.9196C5.42486 14.847 4.92329 14.8063 4.42408 14.5376C3.69136 14.1433 3.10806 13.4741 2.86724 12.6696C2.8399 12.5782 2.79624 12.3879 2.73628 12.0986C2.49693 10.9408 2.39556 9.84102 2.3314 8.70137C2.2857 7.8834 2.32583 7.05079 2.34693 6.23165C2.35259 6.01915 2.37144 5.86563 2.40347 5.7711C2.53267 5.38936 2.87984 5.12569 3.2771 5.0712C3.47808 5.04366 3.83599 5.02061 4.35083 5.00206C5.81275 4.94952 7.27505 4.93057 8.73775 4.94522C9.45591 4.95245 10.1737 4.97295 10.8911 5.00674C11.3678 5.0294 11.6731 5.0546 11.8069 5.08233C12.1916 5.16202 12.5126 5.43067 12.626 5.80801C12.651 5.89063 12.6654 6.01417 12.6691 6.17862C12.6808 6.69463 12.6914 7.21075 12.7007 7.72696C12.7189 8.73067 12.6418 9.75049 12.5223 10.7466C12.4541 11.3158 12.3503 11.883 12.2326 12.444C11.9967 13.569 11.0463 14.5523 9.92251 14.7928C9.78775 14.8217 9.47105 14.8694 8.97242 14.936C8.69136 14.9735 8.24429 14.9949 7.6312 15.0002ZM6.48745 7.44278C6.39019 7.14102 6.14497 7.00157 5.83736 6.97872C5.58072 6.95997 5.3062 6.96143 5.09644 7.10323C4.90992 7.2296 4.81343 7.41807 4.80699 7.66866C4.78062 8.70655 4.78765 9.82227 4.82808 11.0158C4.84038 11.3715 4.80992 11.7181 5.12691 11.9524C5.21558 12.0179 5.33335 12.0632 5.48023 12.0884C5.86021 12.1534 6.33745 12.0992 6.48716 11.6938C6.51802 11.61 6.53492 11.4732 6.53785 11.2836C6.55542 10.1715 6.55249 9.05928 6.52906 7.94698C6.52554 7.78262 6.53345 7.58545 6.48745 7.44278ZM9.02632 6.99249C8.79781 7.02823 8.60708 7.19258 8.52681 7.39854C8.45825 7.57491 8.46968 7.85264 8.46587 8.06417C8.44556 9.13975 8.44429 10.2154 8.46206 11.2912C8.46499 11.4731 8.48179 11.6049 8.51245 11.6867C8.62876 11.9981 8.89742 12.0969 9.21939 12.1068C9.58326 12.118 9.96031 12.0236 10.1018 11.656C10.1342 11.5718 10.154 11.4407 10.161 11.2628C10.2075 10.0935 10.2181 8.90274 10.1929 7.69063C10.1786 7.0001 9.5689 6.90782 9.02632 6.99249Z" fill="#363436"/>
+                                    </g>
+                                    <defs>
+                                        <clipPath >
+                                            <rect width="15" height="15" fill="white"/>
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div class="product-card__body">
+                            <a href="{% url 'product' product.id %}" class="product-card__title"
+                              ><span>{{ product.name }}</span></a
+                            >
+                            {% for category in product.category.all %}
+                            <p class="product-card__label paragraph">{{ category.name }}</p>
+                            {% endfor %}
+                          </div>
+                          <div class="product-card__bottom">
+                            <span class="product-card__price">от <span >{{ product.price }}</span> <span >₽</span></span>
+
+                            <div class="product-rate">
+                              <img
+                                src="/static/img/icons/star-rate.svg"
+                                alt=""
+                                class="product-rate__icon" >
+                              {% if stats.average_rating %}
+                              <span class="product-rate__rating">{{ stats.average_rating|floatformat:1 }}</span>
+                              {% endif %}
+                              <span class="product-rate__rating-max">5</span>
+                            </div>
+                          </div>
+
+                          <div class="product-actions product-actions_small">
+                            <button class="product-actions__button fav-button active">
+                              <svg
+                                width="23"
+                                height="21"
+                                viewBox="0 0 23 21"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                  d="M16.4834 0.403503C15.4231 0.420108 14.3859 0.718115 13.4765 1.26743C12.5672 1.81674 11.8179 2.59792 11.3043 3.53205C10.7908 2.59792 10.0415 1.81674 9.13219 1.26743C8.22284 0.718115 7.18562 0.420108 6.12528 0.403503C4.43496 0.477442 2.84241 1.22191 1.69556 2.47426C0.548699 3.7266 -0.0592386 5.38503 0.00455862 7.08723C0.00455862 11.398 4.51129 16.106 8.29107 19.2981C9.13499 20.0121 10.202 20.4035 11.3043 20.4035C12.4067 20.4035 13.4737 20.0121 14.3176 19.2981C18.0974 16.106 22.6041 11.398 22.6041 7.08723C22.6679 5.38503 22.06 3.7266 20.9131 2.47426C19.7663 1.22191 18.1737 0.477442 16.4834 0.403503Z"
+                                  fill="#A5ABB7" />
+                              </svg>
+                            </button>
+                            <button
+                              class="product-actions__button eq-rm-button">
+                              <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <g clip-path="url(#clip0_543_689)">
+                                      <path d="M7.45724 0H7.74347C8.14308 0.0166016 8.54133 0.0515625 8.9382 0.104883C9.1259 0.130273 9.25822 0.160645 9.33517 0.195996C9.62814 0.330762 9.84054 0.691406 9.86398 0.996387C9.87414 1.12744 9.88576 1.25859 9.89884 1.38984C9.89932 1.39418 9.90132 1.39821 9.90448 1.40121C9.90765 1.40421 9.91177 1.406 9.91613 1.40625C10.7203 1.45459 11.5239 1.52256 12.3182 1.65703C12.6928 1.72051 12.9915 1.90527 13.2144 2.21133C13.4575 2.54561 13.4657 2.90449 13.5082 3.28887C13.5358 3.53691 13.4616 3.73691 13.2859 3.88887C13.0902 4.05791 12.8839 4.06729 12.6027 4.05381C9.15129 3.89092 5.69992 3.8918 2.24855 4.05645C1.9548 4.07031 1.73283 3.96328 1.58263 3.73535C1.4757 3.57305 1.47658 3.39727 1.50265 3.18574C1.52521 3.00352 1.54045 2.78965 1.58468 2.63115C1.72882 2.1167 2.16359 1.73262 2.69591 1.65234C3.55822 1.52246 4.42521 1.43662 5.29689 1.39482C5.30149 1.39469 5.30587 1.39284 5.30917 1.38964C5.31248 1.38644 5.31447 1.38213 5.31476 1.37754C5.32297 1.2623 5.33224 1.14502 5.34259 1.02568C5.37922 0.60498 5.65607 0.180762 6.10021 0.118945C6.55099 0.0560547 7.00334 0.0164063 7.45724 0Z" fill="#363436"/>
+                                      <path d="M7.6312 15.0002H7.30835C6.85337 14.987 6.40777 14.9817 5.95542 14.9196C5.42486 14.847 4.92329 14.8063 4.42408 14.5376C3.69136 14.1433 3.10806 13.4741 2.86724 12.6696C2.8399 12.5782 2.79624 12.3879 2.73628 12.0986C2.49693 10.9408 2.39556 9.84102 2.3314 8.70137C2.2857 7.8834 2.32583 7.05079 2.34693 6.23165C2.35259 6.01915 2.37144 5.86563 2.40347 5.7711C2.53267 5.38936 2.87984 5.12569 3.2771 5.0712C3.47808 5.04366 3.83599 5.02061 4.35083 5.00206C5.81275 4.94952 7.27505 4.93057 8.73775 4.94522C9.45591 4.95245 10.1737 4.97295 10.8911 5.00674C11.3678 5.0294 11.6731 5.0546 11.8069 5.08233C12.1916 5.16202 12.5126 5.43067 12.626 5.80801C12.651 5.89063 12.6654 6.01417 12.6691 6.17862C12.6808 6.69463 12.6914 7.21075 12.7007 7.72696C12.7189 8.73067 12.6418 9.75049 12.5223 10.7466C12.4541 11.3158 12.3503 11.883 12.2326 12.444C11.9967 13.569 11.0463 14.5523 9.92251 14.7928C9.78775 14.8217 9.47105 14.8694 8.97242 14.936C8.69136 14.9735 8.24429 14.9949 7.6312 15.0002ZM6.48745 7.44278C6.39019 7.14102 6.14497 7.00157 5.83736 6.97872C5.58072 6.95997 5.3062 6.96143 5.09644 7.10323C4.90992 7.2296 4.81343 7.41807 4.80699 7.66866C4.78062 8.70655 4.78765 9.82227 4.82808 11.0158C4.84038 11.3715 4.80992 11.7181 5.12691 11.9524C5.21558 12.0179 5.33335 12.0632 5.48023 12.0884C5.86021 12.1534 6.33745 12.0992 6.48716 11.6938C6.51802 11.61 6.53492 11.4732 6.53785 11.2836C6.55542 10.1715 6.55249 9.05928 6.52906 7.94698C6.52554 7.78262 6.53345 7.58545 6.48745 7.44278ZM9.02632 6.99249C8.79781 7.02823 8.60708 7.19258 8.52681 7.39854C8.45825 7.57491 8.46968 7.85264 8.46587 8.06417C8.44556 9.13975 8.44429 10.2154 8.46206 11.2912C8.46499 11.4731 8.48179 11.6049 8.51245 11.6867C8.62876 11.9981 8.89742 12.0969 9.21939 12.1068C9.58326 12.118 9.96031 12.0236 10.1018 11.656C10.1342 11.5718 10.154 11.4407 10.161 11.2628C10.2075 10.0935 10.2181 8.90274 10.1929 7.69063C10.1786 7.0001 9.5689 6.90782 9.02632 6.99249Z" fill="#363436"/>
+                                  </g>
+                                  <defs>
+                                      <clipPath >
+                                          <rect width="15" height="15" fill="white"/>
+                                      </clipPath>
+                                  </defs>
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+                    <div class="slider-btn slider-btn__prev disable">
+                      <svg
+                        width="21"
+                        height="10"
+                        viewBox="0 0 21 10"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M20.3265 5.32997C20.5649 5.09158 20.5649 4.70506 20.3265 4.46666L16.4416 0.581731C16.2032 0.343333 15.8167 0.343333 15.5783 0.581731C15.3399 0.82013 15.3399 1.20665 15.5783 1.44505L19.0315 4.89832L15.5783 8.35158C15.3399 8.58998 15.3399 8.9765 15.5783 9.2149C15.8167 9.4533 16.2032 9.4533 16.4416 9.2149L20.3265 5.32997ZM0.939514 5.50877H19.8949V4.28786H0.939514V5.50877Z"
+                          fill="#F9F9F9" />
+                      </svg>
+                    </div>
+                    <div class="slider-btn slider-btn__next">
+                      <svg
+                        width="21"
+                        height="10"
+                        viewBox="0 0 21 10"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M20.3265 5.32997C20.5649 5.09158 20.5649 4.70506 20.3265 4.46666L16.4416 0.581731C16.2032 0.343333 15.8167 0.343333 15.5783 0.581731C15.3399 0.82013 15.3399 1.20665 15.5783 1.44505L19.0315 4.89832L15.5783 8.35158C15.3399 8.58998 15.3399 8.9765 15.5783 9.2149C15.8167 9.4533 16.2032 9.4533 16.4416 9.2149L20.3265 5.32997ZM0.939514 5.50877H19.8949V4.28786H0.939514V5.50877Z"
+                          fill="#F9F9F9" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="equal__descr equal-descr">
+                  <div class="equal-descr__block">
+                      <div class="spoiler active">
+                          <div class="spoiler__header">
+                              <h3 class="spoiler__title">Общие характеристики</h3>
+
+                              <div class="spoiler__icon">
+                                  <svg
+                                      width="20"
+                                      height="20"
+                                      viewBox="0 0 20 20"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg">
+                                      <path
+                                      d="M12.8334 11.7667L9.00841 15.5917C8.85228 15.7469 8.64107 15.834 8.42091 15.834C8.20076 15.834 7.98955 15.7469 7.83341 15.5917C7.75531 15.5142 7.69331 15.422 7.651 15.3205C7.6087 15.2189 7.58691 15.11 7.58691 15C7.58691 14.89 7.6087 14.7811 7.651 14.6795C7.69331 14.578 7.75531 14.4858 7.83341 14.4083L11.6667 10.5917C11.7449 10.5142 11.8068 10.422 11.8492 10.3205C11.8915 10.2189 11.9132 10.11 11.9132 9.99999C11.9132 9.88998 11.8915 9.78106 11.8492 9.67951C11.8068 9.57796 11.7449 9.48579 11.6667 9.40832L7.83341 5.59165C7.67649 5.43584 7.5879 5.22407 7.58712 5.00294C7.58633 4.7818 7.67343 4.56941 7.82925 4.41249C7.98506 4.25557 8.19683 4.16697 8.41797 4.16619C8.6391 4.16541 8.85149 4.25251 9.00841 4.40832L12.8334 8.23332C13.3016 8.70207 13.5645 9.33749 13.5645 9.99999C13.5645 10.6625 13.3016 11.2979 12.8334 11.7667V11.7667Z"
+                                      fill="#A5ABB7" />
+                                  </svg>
+                              </div>
+                          </div>
+                          <div class="spoiler__body">
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Емкость аккумулятор</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">8000 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8040 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8010 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8090 мА*ч</div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Тип карт памяти</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value equal-descr__descr-value_opacity">Нет данных</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Емкость аккумулятор</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">8000 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8040 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8010 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8090 мА*ч</div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Тип карт памяти</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value equal-descr__descr-value_opacity">Нет данных</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                  </div>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="equal-descr__block">
+                      <div class="spoiler active">
+                          <div class="spoiler__header">
+                              <h3 class="spoiler__title">Критерий</h3>
+
+                              <div class="spoiler__icon">
+                                  <svg
+                                      width="20"
+                                      height="20"
+                                      viewBox="0 0 20 20"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg">
+                                      <path
+                                      d="M12.8334 11.7667L9.00841 15.5917C8.85228 15.7469 8.64107 15.834 8.42091 15.834C8.20076 15.834 7.98955 15.7469 7.83341 15.5917C7.75531 15.5142 7.69331 15.422 7.651 15.3205C7.6087 15.2189 7.58691 15.11 7.58691 15C7.58691 14.89 7.6087 14.7811 7.651 14.6795C7.69331 14.578 7.75531 14.4858 7.83341 14.4083L11.6667 10.5917C11.7449 10.5142 11.8068 10.422 11.8492 10.3205C11.8915 10.2189 11.9132 10.11 11.9132 9.99999C11.9132 9.88998 11.8915 9.78106 11.8492 9.67951C11.8068 9.57796 11.7449 9.48579 11.6667 9.40832L7.83341 5.59165C7.67649 5.43584 7.5879 5.22407 7.58712 5.00294C7.58633 4.7818 7.67343 4.56941 7.82925 4.41249C7.98506 4.25557 8.19683 4.16697 8.41797 4.16619C8.6391 4.16541 8.85149 4.25251 9.00841 4.40832L12.8334 8.23332C13.3016 8.70207 13.5645 9.33749 13.5645 9.99999C13.5645 10.6625 13.3016 11.2979 12.8334 11.7667V11.7667Z"
+                                      fill="#A5ABB7" />
+                                  </svg>
+                              </div>
+                          </div>
+                          <div class="spoiler__body">
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Емкость аккумулятор</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">8000 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8040 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8010 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8090 мА*ч</div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Тип карт памяти</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value equal-descr__descr-value_opacity">Нет данных</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Емкость аккумулятор</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">8000 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8040 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8010 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8090 мА*ч</div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Тип карт памяти</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value equal-descr__descr-value_opacity">Нет данных</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                  </div>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="equal-descr__block">
+                      <div class="spoiler active">
+                          <div class="spoiler__header">
+                              <h3 class="spoiler__title">Критерий</h3>
+
+                              <div class="spoiler__icon">
+                                  <svg
+                                      width="20"
+                                      height="20"
+                                      viewBox="0 0 20 20"
+                                      fill="none"
+                                      xmlns="http://www.w3.org/2000/svg">
+                                      <path
+                                      d="M12.8334 11.7667L9.00841 15.5917C8.85228 15.7469 8.64107 15.834 8.42091 15.834C8.20076 15.834 7.98955 15.7469 7.83341 15.5917C7.75531 15.5142 7.69331 15.422 7.651 15.3205C7.6087 15.2189 7.58691 15.11 7.58691 15C7.58691 14.89 7.6087 14.7811 7.651 14.6795C7.69331 14.578 7.75531 14.4858 7.83341 14.4083L11.6667 10.5917C11.7449 10.5142 11.8068 10.422 11.8492 10.3205C11.8915 10.2189 11.9132 10.11 11.9132 9.99999C11.9132 9.88998 11.8915 9.78106 11.8492 9.67951C11.8068 9.57796 11.7449 9.48579 11.6667 9.40832L7.83341 5.59165C7.67649 5.43584 7.5879 5.22407 7.58712 5.00294C7.58633 4.7818 7.67343 4.56941 7.82925 4.41249C7.98506 4.25557 8.19683 4.16697 8.41797 4.16619C8.6391 4.16541 8.85149 4.25251 9.00841 4.40832L12.8334 8.23332C13.3016 8.70207 13.5645 9.33749 13.5645 9.99999C13.5645 10.6625 13.3016 11.2979 12.8334 11.7667V11.7667Z"
+                                      fill="#A5ABB7" />
+                                  </svg>
+                              </div>
+                          </div>
+                          <div class="spoiler__body">
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Емкость аккумулятор</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">8000 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8040 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8010 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8090 мА*ч</div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Тип карт памяти</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value equal-descr__descr-value_opacity">Нет данных</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Емкость аккумулятор</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">8000 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8040 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8010 мА*ч</div>
+                                    <div class="equal-descr__descr-value">8090 мА*ч</div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="equal-descr__row">
+                                <div class="equal-descr__head">
+                                  <div class="equal-descr__head-block">
+                                    <h4 class="equal-descr__descr-name">Тип карт памяти</h4>
+
+                                    <div class="equal-descr__info">
+                                      <div class="equal-descr__info-icon">
+                                        <img src="/static/img/icons/info-icon.svg" alt="">
+                                      </div>
+                                      
+                                      <div class="equal-descr__info-frame">
+                                        <p>
+                                          Под емкостью аккумулятора понимается то количество электроэнергии, которым должен обладать аккумулятор, будучи заряженным. Измеряется данный параметр в миллиампер-часах (мAч). От емкости используемого аккумулятора зависит длительность автономной работы GPS-навигатора.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="equal-descr__descr-line">
+                                  <div class="equal-descr__descr-line-wrapper">
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value equal-descr__descr-value_opacity">Нет данных</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                    <div class="equal-descr__descr-value">microSD+SD</div>
+                                  </div>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+
+                <div class="equal-clear-btn call-popup-clear">
+                  <div class="equal-clear-btn__icon">
+                    <img src="/static/img/icons/trash.svg" alt="">
+                  </div>
+                  <span class="equal-clear-btn__text">Очистить список</span>
+                </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer class="footer">
+        <div class="footer__container">
+          <div class="footer__wrapper">
+            <a href="index.html" class="logo"><img src="/static/img/logo.svg" alt="logo" ></a>
+
+            <div class="footer-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+              <ul class="footer-nav__list">
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"><span itemprop="name">О компании</span></a>
+                </li>
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"><span itemprop="name">Контакты</span></a>
+                </li>
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"><span itemprop="name">Блог</span></a>
+                </li>
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"
+                    ><span itemprop="name">Правовая информация</span></a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div class="footer-social">
+              <h2 class="footer-social__title">Социальные сети:</h2>
+              <ul class="footer-social__list">
+                <li class="footer-social__el">
+                  <a href="#" class="footer-social__link">
+                    <img
+                      src="/static/img/icons/telegram-icon.svg"
+                      alt="telegram-icon" >
+                  </a>
+                </li>
+                <li class="footer-social__el">
+                  <a href="#" class="footer-social__link">
+                    <img src="/static/img/icons/dzen-icon.svg" alt="dzen-icon" >
+                  </a>
+                </li>
+                <li class="footer-social__el">
+                  <a href="#" class="footer-social__link">
+                    <img src="/static/img/icons/vk-icon.svg" alt="vk-icon" >
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+
+      <div class="cookie-popup popup">
+        <div class="cookie-popup__icon">
+          <img src="/static/img/icons/cookie.png" alt="accept cookies" >
+        </div>
+        <p class="cookie-popup__paragraph">
+          Используя данный сайт, Вы даете согласие на использование файлов
+          cookie и других технологий, чтобы помочь Вам в навигации, а также
+          предоставить лучший пользовательский опыт. Подробнее:
+          <a href="#">Политика конфиденциальности</a>
+        </p>
+        <span></span>
+        <button class="cookie-popup__button popup-close">Принимаю</button>
+      </div>
+
+      <div class="change-location-parrent popup">
+        <div class="change-location">
+          <div class="change-location__wrapper">
+            <button class="popup__close-btn popup-close">
+              <span></span>
+              <span></span>
+            </button>
+
+            <h2 class="change-location__title title title_second">
+              Выберите город
+            </h2>
+            <div class="search-field" id="LocationSearch">
+              <input
+                type="text"
+                class="search-field__input"
+                id="LocInput"
+                placeholder="Найти город" >
+              <button class="search-field__button" id="searchLocationsBtn">
+                <img src="/static/img/icons/search-icon.svg" alt="search" >
+              </button>
+            </div>
+
+            <ul class="change-location__list">
+              {% for city in cities %}
+              <li>
+                <a href="#" class="city-link" data-city="{{ city.city }}">{{ city.city }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+
+            <p class="change-location__error-text">
+              Населенных пунктов с похожим названием не найдено, попробуйте
+              изменить запрос
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="catalog">
+        <div class="catalog__container">
+          <h2 class="catalog__title">Каталог товаров</h2>
+          <div class="catalog__body">
+            <div class="catalog__categories">
+              {% for Categoryse in category %}
+                <div class="catalog-category" data-category-id="{{ Categoryse.id }}"> 
+                  <div class="catalog-category__icon">
+                    <svg
+                      width="14"
+                      height="15"
+                      viewBox="0 0 14 15"
+                      fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M11.7285 0.00049072C12.6194 0.00049072 13.4029 0.678011 13.571 1.55084C13.5952 1.67734 13.6079 1.89456 13.609 2.20251C13.6103 2.62432 13.6103 3.04623 13.609 3.46824C13.609 3.4725 13.6073 3.47657 13.6043 3.47958C13.6013 3.48259 13.5972 3.48427 13.5929 3.48427H0.0170145C0.0125895 3.48427 0.00834585 3.48252 0.0052169 3.47939C0.00208796 3.47626 0.000330121 3.47202 0.000330121 3.46759C0.000548219 3.05473 0.000439225 2.64035 3.02916e-06 2.22443C-0.000215069 1.91997 0.011344 1.70274 0.0346805 1.57276C0.169465 0.826209 0.747533 0.215426 1.49343 0.0466184C1.62887 0.0160847 1.83017 0.000708818 2.09734 0.00049072C5.30774 -0.000163573 8.51814 -0.000163573 11.7285 0.00049072ZM3.53417 2.39095C4.04779 2.17045 3.86884 1.39414 3.29601 1.39217C2.92873 1.39108 2.69776 1.39359 2.60311 1.3997C1.90171 1.4455 1.92624 2.43741 2.68326 2.43741C2.93189 2.43741 3.33068 2.4783 3.53417 2.39095ZM6.22266 2.15802C6.40193 1.78573 6.14382 1.39904 5.73325 1.39283C5.37164 1.38737 5.14351 1.38705 5.04886 1.39185C4.47897 1.42129 4.33764 2.20382 4.87907 2.40535C4.93599 2.4265 5.02181 2.43719 5.13653 2.43741C5.48069 2.43839 6.04076 2.5362 6.22266 2.15802Z"
+                      fill="#363436" />
+                    <path
+                      d="M1.5484 14.9635C0.799884 14.8189 0.201533 14.2248 0.0441753 13.4815C0.0153864 13.3467 0.000991947 13.1296 0.000991947 12.8302C0.000119556 10.0747 1.0437e-05 7.31645 0.00066473 4.55534C0.00066473 4.54892 0.00321538 4.54276 0.00775542 4.53822C0.0122955 4.53368 0.0184531 4.53113 0.0248736 4.53113H13.5933C13.5978 4.53113 13.6021 4.53292 13.6053 4.53611C13.6085 4.5393 13.6103 4.54363 13.6103 4.54814C13.6099 7.38079 13.6083 10.2158 13.6057 13.0533C13.6047 13.9713 13.0038 14.7535 12.1116 14.9537C11.9766 14.984 11.7787 14.9993 11.5179 14.9995C8.41193 15.0001 5.30611 15.0001 2.2004 14.9995C1.8907 14.9995 1.67337 14.9875 1.5484 14.9635ZM10.8161 9.24466C10.8161 8.18083 10.3935 7.16058 9.6413 6.40835C8.88906 5.65611 7.86881 5.23351 6.80499 5.23351C5.74117 5.23351 4.72092 5.65611 3.96868 6.40835C3.21644 7.16058 2.79384 8.18083 2.79384 9.24466C2.79384 10.3085 3.21644 11.3287 3.96868 12.081C4.72092 12.8332 5.74117 13.2558 6.80499 13.2558C7.86881 13.2558 8.88906 12.8332 9.6413 12.081C10.3935 11.3287 10.8161 10.3085 10.8161 9.24466Z"
+                      fill="#363436" />
+                    <path
+                      d="M9.35705 9.08566C9.64723 8.97345 9.93675 9.14324 9.94559 9.4609C9.97307 10.4505 9.56021 11.378 8.80679 12.0041C7.60322 13.0049 5.83401 12.9591 4.68736 11.904C4.01049 11.2815 3.65456 10.4322 3.66274 9.50343C3.66633 9.12394 3.95978 8.96494 4.29904 9.10234C4.58856 9.21914 4.97034 9.40986 5.26445 9.42491C5.69105 9.4465 5.87981 9.20932 6.25864 9.0428C6.93158 8.74739 7.421 9.04935 7.99677 9.4164C8.15184 9.5152 8.2719 9.51553 8.4502 9.44389C8.75183 9.32241 9.05411 9.203 9.35705 9.08566Z"
+                      fill="#363436" />
+                  </svg>
+                </div>
+                <span class="catalog-category__title">{{ Categoryse.name }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            {% for Categoryse in category %}
+            <div class="catalog__main" id="CatalogMenu">
+              <div class="main-catalog">
+                <div class="catalog-section catalog-section_current">
+                  <div class="catalog-section__wrapper">
+                    {% for PodCategoryss in Categoryse.pod_category.all %}
+                    <div class="catalog-section__section">
+                      <h2 class="catalog-section__title">{{ PodCategoryss.name }}</h2>
+                      <ul class="catalog-section__list">
+                        {% for Nishe in PodCategoryss.nish_category.all %}
+                        <li class="catalog-section__el">
+                          <a href="{% url 'subcategory' Nishe.id %}" class="catalog-section__link">{{ Nishe.name }}</a>
+                          <span class="catalog-section__count">540</span>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="clear-eq-list popup">
+        <div class="clear-eq-list__wrapper">
+          <button class="popup__close-btn popup-close">
+            <span></span>
+            <span></span>
+          </button>
+
+          <h2 class="clear-eq-list__title title title_second">Удаление из списка</h2>
+
+          <p class="clear-eq-list__paragraph paragraph">
+            Вы хотите удалить все товары категории «Планшеты» из сравнения? Действие невозможно отменить.
+          </p>
+
+          <div class="clear-eq-list__buttons">
+            <button class="clear-eq-list__button clear-eq-list__button_grey button popup-close">Отменить</button>
+            <button class="clear-eq-list__button button popup-close">Удалить список</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="scroll-to-top">
+        <img src="/static/img/icons/arrow-top-white.svg" alt="" >
+      </button>
+
+      <div class="user-actions user-actions_main">
+        <a
+          href="index.html"
+          class="user-actions-point user-actions-point_mobile">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/home-icon.svg" alt="home" >
+          </span>
+          <h3 class="user-actions-point__title">Главная</h3>
+        </a>
+        <button
+          class="user-actions-point user-actions-point_mobile open-catalog"
+          id="MobileCatalogBtn">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/catalogue-icon.svg" alt="catalogue" >
+          </span>
+          <span class="user-actions-point__title">Каталог</span>
+        </button>
+        <a href="#" class="user-actions-point user-actions-point_current-page user-actions-point_num">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/equel-icon.svg" alt="comparison" >
+
+            <span class="user-actions-point__num">0</span>
+          </span>
+          <h3 class="user-actions-point__title">Сравнение</h3>
+        </a>
+        <a href="#" class="user-actions-point user-actions-point_num">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/favorite-icon.svg" alt="favorite" >
+
+            <span class="user-actions-point__num">0</span>
+          </span>
+          <h3 class="user-actions-point__title">Избранное</h3>
+        </a>
+      </div>
+    </div>
+
+    <script src="/static/js/catalog.js"></script>
+    <script src="/static/js/popup.js"></script>
+    <script src="/static/js/search.js"></script>
+    <script src="/static/js/actions.js"></script>
+    <script src="/static/js/slider-core.js"></script>
+    <script src="/static/js/scroll-control.js"></script>
+    <script src="/static/js/range.js"></script>
+  </body>
+</html>

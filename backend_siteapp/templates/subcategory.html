@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>СравниPrice</title>
+    <link rel="stylesheet" href="/static/css/style.css" >
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+  const cityLinks = document.querySelectorAll('.city-link');
+  const selectedCityElement = document.getElementById('selectedCity');
+
+  cityLinks.forEach(function(cityLink) {
+    cityLink.addEventListener('click', function(event) {
+      event.preventDefault();
+      const selectedCity = this.getAttribute('data-city');
+      setCookie('selected_city', selectedCity, 10);
+      displaySelectedCity(selectedCity);
+    });
+  });
+
+  // Функция для установки куки
+  function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = 'expires=' + date.toUTCString();
+    document.cookie = name + '=' + value + ';' + expires + ';path=/';
+  }
+
+  // Функция для получения куки
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift();
+    }
+  }
+
+  // Функция для отображения выбранного города
+  function displaySelectedCity(city) {
+    if (selectedCityElement) {
+      selectedCityElement.textContent = city;
+    }
+  }
+
+  // Получаем выбранный город из куки при загрузке страницы
+  const selectedCityFromCookie = getCookie('selected_city');
+  if (selectedCityFromCookie) {
+    displaySelectedCity(selectedCityFromCookie);
+  }
+});
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <div class="header__container">
+          <div class="header__wrapper">
+            <div class="header-left">
+              <a href="{% url 'home' %}" class="logo"
+                ><img src="/static/img/logo.svg" alt="logo"
+              ></a>
+              <button class="header__button button open-catalog">
+                <span class="open-catalog__icon">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </span>
+                <span class="button__text">Каталог</span>
+              </button>
+
+              <div class="location">
+                <div class="location__icon">
+                  <img src="/static/img/icons/location-icon.svg" alt="location" >
+                </div>
+                <span class="location__text">Ваш город: </span>
+                <span class="location__lacate open-popup-location" id="selectedCity">Минск</span>
+
+                <div class="location-question popup">
+                  <div class="location-question__wrapper">
+                    <button class="popup__close-btn popup-close">
+                      <span></span>
+                      <span></span>
+                    </button>
+
+                    <h3 class="location-question__title">
+                      <span>Ваш город </span>
+                      <span class="location-question__locate">Минск?</span>
+                    </h3>
+                    <div class="location-question__buttons">
+                      <button
+                        class="location-question__button button popup-close">
+                        Да, спасибо
+                      </button>
+                      <button
+                        class="location-question__button location-question__button_grey popup-close change-city-btn">
+                        Нет, другой
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="header-search search-field">
+              <input
+                type="text"
+                class="search-field__input"
+                placeholder="Например, ноутбук Assus" >
+              <button class="search-field__button">
+                <img src="/static/img/icons/search-icon.svg" alt="search" >
+              </button>
+            </div>
+
+            <div class="user-actions">
+              <a href="{% url 'equaliz' %}" class="user-actions-point user-actions-point_num">
+                <span class="user-actions-point__icon">
+                  <img src="/static/img/icons/equel-icon.svg" alt="comparison" >
+                </span>
+                <h3 class="user-actions-point__title">Сравнение</h3>
+              </a>
+              <a href="{% url 'favorite' %}" class="user-actions-point user-actions-point_num">
+                <span class="user-actions-point__icon">
+                  <img src="/static/img/icons/favorite-icon.svg" alt="favorite" >
+                </span>
+                <h3 class="user-actions-point__title">Избранное</h3>
+              </a>
+            </div>
+
+            <div class="status-popup status-popup_green popup">
+              <div class="status-popup__wrapper">
+                <button class="popup__close-btn popup-close">
+                  <span></span>
+                  <span></span>
+                </button>
+
+                <p class="status-popup__paragraph">
+                  Товар успешно добавлен в сравнение
+                </p>
+              </div>
+            </div>
+            <div class="status-popup status-popup_red popup">
+              <div class="status-popup__wrapper">
+                <button class="popup__close-btn popup-close">
+                  <span></span>
+                  <span></span>
+                </button>
+
+                <p class="status-popup__paragraph">
+                  Ошибка! Не удалось добавить товар
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main class="main">
+        <div class="main__breadcrumbs breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+          <div class="breadcrumbs__container">
+            <div class="breadcrumbs__wrapper">
+              <span class="breadcrumbs__crumb" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a href="{% url 'home' %}" itemprop="item" itemscope itemtype="https://schema.org/WebPage">
+                  <span itemprop="name">Главная</span>
+                </a>
+                <meta itemprop="position" content="1" >
+              </span>
+              <span class="breadcrumbs__crumb" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a href="category.html" itemprop="item" itemscope itemtype="https://schema.org/WebPage">
+                  <span itemprop="name">Категория</span>
+                </a>
+                <meta itemprop="position" content="2" >
+              </span>
+              <span class="breadcrumbs__crumb breadcrumbs__crumb_current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <span itemprop="name">Подкатегория с товарами</span>
+                <meta itemprop="position" content="3" >
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <section class="main__subcategory subcategory">
+          <div class="subcategory__container">
+            <div class="subcategory__wrapper">
+              <h1 class="subcategory__title title title_first">Подкатегория</h1>
+
+              <div class="subcategory__main">
+                <div class="subcategory-aside">
+                  <div class="subcategory-aside__header">
+                    <h2 class="subcategory-aside__title">
+                      <img src="/static/img/icons/filter-icon.svg" alt="" >
+                      <span>Фильтр</span>
+                    </h2>
+
+                    <button class="subcategory-aside__close-btn">
+                      <span></span>
+                      <span></span>
+                    </button>
+                  </div>
+
+                  <div class="subcategory-aside__body">
+                    <div class="search-field">
+                      <input
+                        type="text"
+                        class="search-field__input"
+                        placeholder="Поиск по фильтру" >
+                      <button class="search-field__button">
+                        <img src="/static/img/icons/search-icon.svg" alt="search" >
+                      </button>
+                    </div>
+
+                    <div class="subcategory-aside__spoiler spoiler active">
+                      <div class="spoiler__header">
+                        <h3 class="spoiler__title">Цена</h3>
+
+                        <div class="spoiler__icon">
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M12.8334 11.7667L9.00841 15.5917C8.85228 15.7469 8.64107 15.834 8.42091 15.834C8.20076 15.834 7.98955 15.7469 7.83341 15.5917C7.75531 15.5142 7.69331 15.422 7.651 15.3205C7.6087 15.2189 7.58691 15.11 7.58691 15C7.58691 14.89 7.6087 14.7811 7.651 14.6795C7.69331 14.578 7.75531 14.4858 7.83341 14.4083L11.6667 10.5917C11.7449 10.5142 11.8068 10.422 11.8492 10.3205C11.8915 10.2189 11.9132 10.11 11.9132 9.99999C11.9132 9.88998 11.8915 9.78106 11.8492 9.67951C11.8068 9.57796 11.7449 9.48579 11.6667 9.40832L7.83341 5.59165C7.67649 5.43584 7.5879 5.22407 7.58712 5.00294C7.58633 4.7818 7.67343 4.56941 7.82925 4.41249C7.98506 4.25557 8.19683 4.16697 8.41797 4.16619C8.6391 4.16541 8.85149 4.25251 9.00841 4.40832L12.8334 8.23332C13.3016 8.70207 13.5645 9.33749 13.5645 9.99999C13.5645 10.6625 13.3016 11.2979 12.8334 11.7667V11.7667Z"
+                              fill="#A5ABB7" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="spoiler__body">
+                        <div class="price-range range-slider">
+                          <div class="slider">
+                              <div class="progress" style="right: 0%; left: 0%;"></div>
+                          </div>
+                          <div class="range-input">
+                              <input type="range" class="range-min" min="5000" max="100000" value="25000">
+                              <input type="range" class="range-max" min="5000" max="100000" value="100000">
+                          </div>
+                          <div class="price-input">
+                            <div class="field">
+                              <span>От</span>
+                              <input type="number" class="input-min" value="25000" min="5000" max="100000" placeholder="5000">
+                            </div>
+                            <div class="field">
+                              <span>До</span>
+                              <input type="number" class="input-max" value="100000" min="5000" max="100000" placeholder="100000">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="subcategory-aside__spoiler spoiler active">
+                      <div class="spoiler__header">
+                        <h3 class="spoiler__title">Чекбоксы</h3>
+
+                        <div class="spoiler__icon">
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M12.8334 11.7667L9.00841 15.5917C8.85228 15.7469 8.64107 15.834 8.42091 15.834C8.20076 15.834 7.98955 15.7469 7.83341 15.5917C7.75531 15.5142 7.69331 15.422 7.651 15.3205C7.6087 15.2189 7.58691 15.11 7.58691 15C7.58691 14.89 7.6087 14.7811 7.651 14.6795C7.69331 14.578 7.75531 14.4858 7.83341 14.4083L11.6667 10.5917C11.7449 10.5142 11.8068 10.422 11.8492 10.3205C11.8915 10.2189 11.9132 10.11 11.9132 9.99999C11.9132 9.88998 11.8915 9.78106 11.8492 9.67951C11.8068 9.57796 11.7449 9.48579 11.6667 9.40832L7.83341 5.59165C7.67649 5.43584 7.5879 5.22407 7.58712 5.00294C7.58633 4.7818 7.67343 4.56941 7.82925 4.41249C7.98506 4.25557 8.19683 4.16697 8.41797 4.16619C8.6391 4.16541 8.85149 4.25251 9.00841 4.40832L12.8334 8.23332C13.3016 8.70207 13.5645 9.33749 13.5645 9.99999C13.5645 10.6625 13.3016 11.2979 12.8334 11.7667V11.7667Z"
+                              fill="#A5ABB7" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="spoiler__body checkbox-parent">
+                        <div class="checkbox">
+                          <input
+                            type="checkbox"
+                            class="checkbox__input"
+                            id="checkbox1"
+                            name="checkbox" >
+                          <label
+                            for="checkbox1"
+                            class="checkbox__custom-input"></label>
+
+                          <label for="checkbox1" class="checkbox__label"
+                            >Обычный пункт</label
+                          >
+                        </div>
+                        <div class="checkbox">
+                          <input
+                            type="checkbox"
+                            class="checkbox__input"
+                            id="checkbox2"
+                            name="checkbox"
+                            checked >
+                          <label
+                            for="checkbox2"
+                            class="checkbox__custom-input"></label>
+
+                          <label for="checkbox2" class="checkbox__label"
+                            >Выбранный пункт</label
+                          >
+                        </div>
+                        <div class="checkbox">
+                          <input
+                            type="checkbox"
+                            class="checkbox__input"
+                            id="checkbox3"
+                            name="checkbox" >
+                          <label
+                            for="checkbox3"
+                            class="checkbox__custom-input"></label>
+
+                          <label for="checkbox3" class="checkbox__label"
+                            >Обычный пункт</label
+                          >
+                        </div>
+                        <div class="checkbox">
+                          <input
+                            type="checkbox"
+                            class="checkbox__input"
+                            id="checkbox4"
+                            name="checkbox"
+                            checked >
+                          <label
+                            for="checkbox4"
+                            class="checkbox__custom-input"></label>
+
+                          <label for="checkbox4" class="checkbox__label"
+                            >Выбранный пункт</label
+                          >
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="subcategory-aside__spoiler spoiler active">
+                      <div class="spoiler__header">
+                        <h3 class="spoiler__title">Радиокнопка</h3>
+
+                        <div class="spoiler__icon">
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M12.8334 11.7667L9.00841 15.5917C8.85228 15.7469 8.64107 15.834 8.42091 15.834C8.20076 15.834 7.98955 15.7469 7.83341 15.5917C7.75531 15.5142 7.69331 15.422 7.651 15.3205C7.6087 15.2189 7.58691 15.11 7.58691 15C7.58691 14.89 7.6087 14.7811 7.651 14.6795C7.69331 14.578 7.75531 14.4858 7.83341 14.4083L11.6667 10.5917C11.7449 10.5142 11.8068 10.422 11.8492 10.3205C11.8915 10.2189 11.9132 10.11 11.9132 9.99999C11.9132 9.88998 11.8915 9.78106 11.8492 9.67951C11.8068 9.57796 11.7449 9.48579 11.6667 9.40832L7.83341 5.59165C7.67649 5.43584 7.5879 5.22407 7.58712 5.00294C7.58633 4.7818 7.67343 4.56941 7.82925 4.41249C7.98506 4.25557 8.19683 4.16697 8.41797 4.16619C8.6391 4.16541 8.85149 4.25251 9.00841 4.40832L12.8334 8.23332C13.3016 8.70207 13.5645 9.33749 13.5645 9.99999C13.5645 10.6625 13.3016 11.2979 12.8334 11.7667V11.7667Z"
+                              fill="#A5ABB7" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="spoiler__body radio-parent">
+                        <div class="radio">
+                          <input
+                            type="radio"
+                            class="radio__input"
+                            id="radio1"
+                            name="filter-radio" >
+                          <label
+                            for="radio1"
+                            class="radio__custom-input"></label>
+
+                          <label for="radio1" class="radio__label"
+                            >Обычный пункт</label
+                          >
+                        </div>
+                        <div class="radio">
+                          <input
+                            type="radio"
+                            class="radio__input"
+                            id="radio2"
+                            checked
+                            name="filter-radio" >
+                          <label
+                            for="radio2"
+                            class="radio__custom-input"></label>
+
+                          <label for="radio2" class="radio__label"
+                            >Обычный пункт</label
+                          >
+                        </div>
+                        <div class="radio">
+                          <input type="radio" class="radio__input" id="radio3" name="filter-radio">
+                          <label for="radio3" class="radio__custom-input"></label>
+
+                          <label for="radio3" class="radio__label">Обычный пункт</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="subcategory-aside__spoiler spoiler">
+                      <div class="spoiler__header">
+                        <h3 class="spoiler__title">Пункт фильтра</h3>
+
+                        <div class="spoiler__icon">
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M12.8334 11.7667L9.00841 15.5917C8.85228 15.7469 8.64107 15.834 8.42091 15.834C8.20076 15.834 7.98955 15.7469 7.83341 15.5917C7.75531 15.5142 7.69331 15.422 7.651 15.3205C7.6087 15.2189 7.58691 15.11 7.58691 15C7.58691 14.89 7.6087 14.7811 7.651 14.6795C7.69331 14.578 7.75531 14.4858 7.83341 14.4083L11.6667 10.5917C11.7449 10.5142 11.8068 10.422 11.8492 10.3205C11.8915 10.2189 11.9132 10.11 11.9132 9.99999C11.9132 9.88998 11.8915 9.78106 11.8492 9.67951C11.8068 9.57796 11.7449 9.48579 11.6667 9.40832L7.83341 5.59165C7.67649 5.43584 7.5879 5.22407 7.58712 5.00294C7.58633 4.7818 7.67343 4.56941 7.82925 4.41249C7.98506 4.25557 8.19683 4.16697 8.41797 4.16619C8.6391 4.16541 8.85149 4.25251 9.00841 4.40832L12.8334 8.23332C13.3016 8.70207 13.5645 9.33749 13.5645 9.99999C13.5645 10.6625 13.3016 11.2979 12.8334 11.7667V11.7667Z"
+                              fill="#A5ABB7" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="spoiler__body">content</div>
+                    </div>
+
+                    <div class="subcategory-aside__spoiler spoiler">
+                      <div class="spoiler__header">
+                        <h3 class="spoiler__title">Пункт фильтра</h3>
+
+                        <div class="spoiler__icon">
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M12.8334 11.7667L9.00841 15.5917C8.85228 15.7469 8.64107 15.834 8.42091 15.834C8.20076 15.834 7.98955 15.7469 7.83341 15.5917C7.75531 15.5142 7.69331 15.422 7.651 15.3205C7.6087 15.2189 7.58691 15.11 7.58691 15C7.58691 14.89 7.6087 14.7811 7.651 14.6795C7.69331 14.578 7.75531 14.4858 7.83341 14.4083L11.6667 10.5917C11.7449 10.5142 11.8068 10.422 11.8492 10.3205C11.8915 10.2189 11.9132 10.11 11.9132 9.99999C11.9132 9.88998 11.8915 9.78106 11.8492 9.67951C11.8068 9.57796 11.7449 9.48579 11.6667 9.40832L7.83341 5.59165C7.67649 5.43584 7.5879 5.22407 7.58712 5.00294C7.58633 4.7818 7.67343 4.56941 7.82925 4.41249C7.98506 4.25557 8.19683 4.16697 8.41797 4.16619C8.6391 4.16541 8.85149 4.25251 9.00841 4.40832L12.8334 8.23332C13.3016 8.70207 13.5645 9.33749 13.5645 9.99999C13.5645 10.6625 13.3016 11.2979 12.8334 11.7667V11.7667Z"
+                              fill="#A5ABB7" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="spoiler__body">content</div>
+                    </div>
+
+                    <div class="subcategory-aside__spoiler spoiler">
+                      <div class="spoiler__header">
+                        <h3 class="spoiler__title">Пункт фильтра</h3>
+
+                        <div class="spoiler__icon">
+                          <svg
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M12.8334 11.7667L9.00841 15.5917C8.85228 15.7469 8.64107 15.834 8.42091 15.834C8.20076 15.834 7.98955 15.7469 7.83341 15.5917C7.75531 15.5142 7.69331 15.422 7.651 15.3205C7.6087 15.2189 7.58691 15.11 7.58691 15C7.58691 14.89 7.6087 14.7811 7.651 14.6795C7.69331 14.578 7.75531 14.4858 7.83341 14.4083L11.6667 10.5917C11.7449 10.5142 11.8068 10.422 11.8492 10.3205C11.8915 10.2189 11.9132 10.11 11.9132 9.99999C11.9132 9.88998 11.8915 9.78106 11.8492 9.67951C11.8068 9.57796 11.7449 9.48579 11.6667 9.40832L7.83341 5.59165C7.67649 5.43584 7.5879 5.22407 7.58712 5.00294C7.58633 4.7818 7.67343 4.56941 7.82925 4.41249C7.98506 4.25557 8.19683 4.16697 8.41797 4.16619C8.6391 4.16541 8.85149 4.25251 9.00841 4.40832L12.8334 8.23332C13.3016 8.70207 13.5645 9.33749 13.5645 9.99999C13.5645 10.6625 13.3016 11.2979 12.8334 11.7667V11.7667Z"
+                              fill="#A5ABB7" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="spoiler__body">content</div>
+                    </div>
+                  </div>
+
+                  <button class="subcategory-aside__search">
+                    Показать 1200 товаров
+                  </button>
+                </div>
+                <div class="subcategory-main">
+                  <div class="subcategory-main__header">
+                    <button class="filter-button open-filter">
+                      <span class="filter-button__icon">
+                        <svg
+                          width="15"
+                          height="15"
+                          viewBox="0 0 15 15"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg">
+                          <g clip-path="url(#clip0_1_4710)">
+                            <path
+                              d="M0.625905 2.96921H2.33573C2.6732 4.21086 3.95332 4.94385 5.19497 4.60639C5.99244 4.38964 6.61541 3.76667 6.83215 2.96921H14.3745C14.7197 2.96921 14.9995 2.68942 14.9995 2.34428C14.9995 1.99914 14.7197 1.71935 14.3745 1.71935H6.83215C6.49469 0.477667 5.21457 -0.255327 3.97292 0.0821398C3.17545 0.298886 2.55248 0.921851 2.33573 1.71932H0.625905C0.280763 1.71932 0.000976562 1.99911 0.000976562 2.34425C0.000976562 2.68939 0.280763 2.96921 0.625905 2.96921Z"
+                              fill="#363436" />
+                            <path
+                              d="M14.3745 6.87533H12.6647C12.3279 5.63385 11.0485 4.90045 9.80701 5.23721C9.0089 5.45373 8.3854 6.07719 8.16889 6.87533H0.625905C0.280763 6.87533 0.000976562 7.15512 0.000976562 7.50026C0.000976562 7.8454 0.280763 8.12519 0.625905 8.12519H8.16889C8.50569 9.36667 9.7851 10.1001 11.0266 9.76331C11.8247 9.54679 12.4482 8.92333 12.6647 8.12519H14.3745C14.7197 8.12519 14.9995 7.8454 14.9995 7.50026C14.9995 7.15512 14.7197 6.87533 14.3745 6.87533Z"
+                              fill="#363436" />
+                            <path
+                              d="M14.3745 12.0308H6.83215C6.49469 10.7892 5.21457 10.0562 3.97291 10.3937C3.17545 10.6104 2.55248 11.2334 2.33573 12.0308H0.625905C0.280763 12.0308 0.000976562 12.3106 0.000976562 12.6558C0.000976562 13.0009 0.280763 13.2807 0.625905 13.2807H2.33573C2.6732 14.5223 3.95332 15.2553 5.19497 14.9179C5.99244 14.7011 6.61541 14.0782 6.83215 13.2807H14.3745C14.7197 13.2807 14.9995 13.0009 14.9995 12.6558C14.9995 12.3106 14.7197 12.0308 14.3745 12.0308Z"
+                              fill="#363436" />
+                          </g>
+                          <defs>
+                            <clipPath id="clip0_1_4710">
+                              <rect width="15" height="15" fill="white" />
+                            </clipPath>
+                          </defs>
+                        </svg>
+                      </span>
+                      <span class="filter-button__text">Фильтр</span>
+                    </button>
+                    <div class="subcategory-dropdown dropdown">
+                      <div class="dropdown__header">
+                        <span>Сортировка:</span>
+                        <div class="dropdown__current">сначала недорогие</div>
+                        <img
+                          src="/static/img/icons/spoiler-icon-grey.svg"
+                          alt=""
+                          class="dropdown__icon" >
+                      </div>
+                      <div class="dropdown__body">
+                        <div class="dropdown__item">сначала недорогие</div>
+                        <div class="dropdown__item">сначала дорогие</div>
+                        <div class="dropdown__item">сначала новые</div>
+                        <div class="dropdown__item">сначала старые</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="subcategory-main__list">
+                    {% for product, stats in products.items %}
+                    <div class="product product-banner product-slides" itemscope itemtype="https://schema.org/Product">
+                      <div class="product-banner__preview">
+                        <div class="product-status">
+                          {% if product.new %}
+                          <div
+                            class="product-status__label product-status__label_green">
+                            new
+                          </div>
+                          {% endif %}
+                          {% if product.xit %}
+                          <div
+                            class="product-status__label product-status__label_orange">
+                            хит
+                          </div>
+                          {% endif %}
+                        </div>
+
+                        <div
+                          class="product-banner__slider slider slider-init"
+                          data-current-slide="0">
+                          <div class="slider-wrapper">
+                            <a
+                              href="{% url 'product' product.id %}"
+                              class="slider-slide product-banner__preview-img">
+                              <img src="{{ product.images.url }}" alt="" itemprop="image">
+                            </a>
+                          </div>
+
+                          <div class="product-banner__bullets"></div>
+                        </div>
+
+                        <div class="product-actions">
+                          <button class="product-actions__button fav-button" onclick="window.location.href='{% url 'toggle_favorite' product.id %}'">
+                            <svg
+                              width="23"
+                              height="21"
+                              viewBox="0 0 23 21"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <path
+                                d="M16.4834 0.403503C15.4231 0.420108 14.3859 0.718115 13.4765 1.26743C12.5672 1.81674 11.8179 2.59792 11.3043 3.53205C10.7908 2.59792 10.0415 1.81674 9.13219 1.26743C8.22284 0.718115 7.18562 0.420108 6.12528 0.403503C4.43496 0.477442 2.84241 1.22191 1.69556 2.47426C0.548699 3.7266 -0.0592386 5.38503 0.00455862 7.08723C0.00455862 11.398 4.51129 16.106 8.29107 19.2981C9.13499 20.0121 10.202 20.4035 11.3043 20.4035C12.4067 20.4035 13.4737 20.0121 14.3176 19.2981C18.0974 16.106 22.6041 11.398 22.6041 7.08723C22.6679 5.38503 22.06 3.7266 20.9131 2.47426C19.7663 1.22191 18.1737 0.477442 16.4834 0.403503Z"
+                                fill="#A5ABB7" />
+                            </svg>
+                          </button>
+                          <button
+                            class="product-actions__button comprasion-button" onclick="window.location.href='{% url 'toggle_equaliz' product.id %}'">
+                            <svg
+                              width="20"
+                              height="21"
+                              viewBox="0 0 20 21"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg">
+                              <g>
+                                <rect
+                                  y="4.03986"
+                                  width="5.45455"
+                                  height="16.3636"
+                                  rx="2.72727"
+                                  fill="#A5ABB7" />
+                                <rect
+                                  x="7.27271"
+                                  y="9.49438"
+                                  width="5.45455"
+                                  height="10.9091"
+                                  rx="2.72727"
+                                  fill="#A5ABB7" />
+                                <rect
+                                  x="14.5454"
+                                  y="0.403503"
+                                  width="5.45455"
+                                  height="20"
+                                  rx="2.72727"
+                                  fill="#A5ABB7" />
+                              </g>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="product-banner__main">
+                        <h3 class="product-banner__headline">
+                          <a href="#" class="product-banner__title"
+                            ><span itemprop="name">{{ product.name }}</span></a
+                          >
+                          <span class="product-rate" itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                            <img
+                              src="/static/img/icons/star-rate.svg"
+                              alt=""
+                              class="product-rate__icon" >
+                            {% if stats.average_rating %}
+                            <span class="product-rate__rating" itemprop="ratingValue">{{ stats.average_rating|floatformat:1 }}</span>
+                            {% endif %}
+                            <span class="product-rate__rating-max" itemprop="bestRating">5</span>
+                          </span>
+                        </h3>
+
+                        <div class="product-banner__descr">
+                          <div class="product-banner__descr-row">
+                            <span class="product-banner__descr-title"
+                              >Характеристики:</span
+                            >
+                            <span class="product-banner__descr-value"
+                              >1234</span
+                            >
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="product-banner__info">
+                        <span class="product-banner__price" itemprop="offers" itemscope itemtype="https://schema.org/AggregateOffer">
+                          от <span itemprop="lowPrice">1,500</span> <span itemprop="priceCurrency">₽</span> до <span itemprop="highPrice">{{ product.price }}</span> ₽
+                        </span>
+
+                        <div class="sites-list">
+                          <div class="sites-list__row">
+                            <div class="sites-list__title">
+                              <a href="#">sity.ru</a>
+                            </div>
+                            <div class="sites-list__price sites-list__price_green">
+                              <span>1,500</span> <span>₽</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="product-banner__info-actions">
+                          <a href="{% url 'toggle_equaliz' product.id %}">
+                          <button class="product-banner__button">
+                            <span>Сравнить цены</span>
+                          </button>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  <button class="subcategory-main__button">Показать ещё</button>
+                  <div class="subcategory-main__pagination pagination">
+                    <div class="pagination__page pagination__page_current">
+                      1
+                    </div>
+                    <div class="pagination__page">2</div>
+                    <div class="pagination__page">3</div>
+                    <div class="pagination__page">4</div>
+                    <div class="pagination__page">5</div>
+                    <div class="pagination__dots">...</div>
+                    <div class="pagination__page">10</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="main__articles articles">
+          <div class="articles__container">
+            <div class="articles__wrapper">
+              {% for ContentSub in content %}
+              <div class="articles__article article">
+                <div class="article__preview">
+                  <img src="{{ ContentSub.image.url }}" alt="{{ ContentSub.name }}" >
+                </div>
+                <div class="article__body">
+                  <h2 class="article__title title title_third">{{ ContentSub.name }}</h2>
+
+                  <p class="article__paragraph paragraph">
+                    {{ ContentSub.text }}
+                  </p>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer class="footer">
+        <div class="footer__container">
+          <div class="footer__wrapper">
+            <a href="index.html" class="logo"><img src="/static/img/logo.svg" alt="logo" ></a>
+
+            <div class="footer-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+              <ul class="footer-nav__list">
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"><span itemprop="name">О компании</span></a>
+                </li>
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"><span itemprop="name">Контакты</span></a>
+                </li>
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"><span itemprop="name">Блог</span></a>
+                </li>
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"
+                    ><span itemprop="name">Правовая информация</span></a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div class="footer-social">
+              <h2 class="footer-social__title">Социальные сети:</h2>
+              <ul class="footer-social__list">
+                <li class="footer-social__el">
+                  <a href="#" class="footer-social__link">
+                    <img
+                      src="/static/img/icons/telegram-icon.svg"
+                      alt="telegram-icon" >
+                  </a>
+                </li>
+                <li class="footer-social__el">
+                  <a href="#" class="footer-social__link">
+                    <img src="/static/img/icons/dzen-icon.svg" alt="dzen-icon" >
+                  </a>
+                </li>
+                <li class="footer-social__el">
+                  <a href="#" class="footer-social__link">
+                    <img src="/static/img/icons/vk-icon.svg" alt="vk-icon" >
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <div class="cookie-popup popup">
+        <div class="cookie-popup__icon">
+          <img src="/static/img/icons/cookie.png" alt="accept cookies" >
+        </div>
+        <p class="cookie-popup__paragraph">
+          Используя данный сайт, Вы даете согласие на использование файлов
+          cookie и других технологий, чтобы помочь Вам в навигации, а также
+          предоставить лучший пользовательский опыт. Подробнее:
+          <a href="#">Политика конфиденциальности</a>
+        </p>
+        <span></span>
+        <button class="cookie-popup__button popup-close">Принимаю</button>
+      </div>
+
+      <div class="change-location-parrent popup">
+        <div class="change-location">
+          <div class="change-location__wrapper">
+            <button class="popup__close-btn popup-close">
+              <span></span>
+              <span></span>
+            </button>
+
+            <h2 class="change-location__title title title_second">
+              Выберите город
+            </h2>
+            <div class="search-field" id="LocationSearch">
+              <input
+                type="text"
+                class="search-field__input"
+                id="LocInput"
+                placeholder="Найти город" >
+              <button class="search-field__button" id="searchLocationsBtn">
+                <img src="/static/img/icons/search-icon.svg" alt="search" >
+              </button>
+            </div>
+
+            <ul class="change-location__list">
+              {% for city in cities %}
+              <li>
+                <a href="#" class="city-link" data-city="{{ city.city }}">{{ city.city }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+
+            <p class="change-location__error-text">
+              Населенных пунктов с похожим названием не найдено, попробуйте
+              изменить запрос
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="catalog">
+        <div class="catalog__container">
+          <h2 class="catalog__title">Каталог товаров</h2>
+          <div class="catalog__body">
+            <div class="catalog__categories">
+              {% for Categoryse in category %}
+                <div class="catalog-category" data-category-id="{{ Categoryse.id }}"> 
+                  <div class="catalog-category__icon">
+                    <svg
+                      width="14"
+                      height="15"
+                      viewBox="0 0 14 15"
+                      fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M11.7285 0.00049072C12.6194 0.00049072 13.4029 0.678011 13.571 1.55084C13.5952 1.67734 13.6079 1.89456 13.609 2.20251C13.6103 2.62432 13.6103 3.04623 13.609 3.46824C13.609 3.4725 13.6073 3.47657 13.6043 3.47958C13.6013 3.48259 13.5972 3.48427 13.5929 3.48427H0.0170145C0.0125895 3.48427 0.00834585 3.48252 0.0052169 3.47939C0.00208796 3.47626 0.000330121 3.47202 0.000330121 3.46759C0.000548219 3.05473 0.000439225 2.64035 3.02916e-06 2.22443C-0.000215069 1.91997 0.011344 1.70274 0.0346805 1.57276C0.169465 0.826209 0.747533 0.215426 1.49343 0.0466184C1.62887 0.0160847 1.83017 0.000708818 2.09734 0.00049072C5.30774 -0.000163573 8.51814 -0.000163573 11.7285 0.00049072ZM3.53417 2.39095C4.04779 2.17045 3.86884 1.39414 3.29601 1.39217C2.92873 1.39108 2.69776 1.39359 2.60311 1.3997C1.90171 1.4455 1.92624 2.43741 2.68326 2.43741C2.93189 2.43741 3.33068 2.4783 3.53417 2.39095ZM6.22266 2.15802C6.40193 1.78573 6.14382 1.39904 5.73325 1.39283C5.37164 1.38737 5.14351 1.38705 5.04886 1.39185C4.47897 1.42129 4.33764 2.20382 4.87907 2.40535C4.93599 2.4265 5.02181 2.43719 5.13653 2.43741C5.48069 2.43839 6.04076 2.5362 6.22266 2.15802Z"
+                      fill="#363436" />
+                    <path
+                      d="M1.5484 14.9635C0.799884 14.8189 0.201533 14.2248 0.0441753 13.4815C0.0153864 13.3467 0.000991947 13.1296 0.000991947 12.8302C0.000119556 10.0747 1.0437e-05 7.31645 0.00066473 4.55534C0.00066473 4.54892 0.00321538 4.54276 0.00775542 4.53822C0.0122955 4.53368 0.0184531 4.53113 0.0248736 4.53113H13.5933C13.5978 4.53113 13.6021 4.53292 13.6053 4.53611C13.6085 4.5393 13.6103 4.54363 13.6103 4.54814C13.6099 7.38079 13.6083 10.2158 13.6057 13.0533C13.6047 13.9713 13.0038 14.7535 12.1116 14.9537C11.9766 14.984 11.7787 14.9993 11.5179 14.9995C8.41193 15.0001 5.30611 15.0001 2.2004 14.9995C1.8907 14.9995 1.67337 14.9875 1.5484 14.9635ZM10.8161 9.24466C10.8161 8.18083 10.3935 7.16058 9.6413 6.40835C8.88906 5.65611 7.86881 5.23351 6.80499 5.23351C5.74117 5.23351 4.72092 5.65611 3.96868 6.40835C3.21644 7.16058 2.79384 8.18083 2.79384 9.24466C2.79384 10.3085 3.21644 11.3287 3.96868 12.081C4.72092 12.8332 5.74117 13.2558 6.80499 13.2558C7.86881 13.2558 8.88906 12.8332 9.6413 12.081C10.3935 11.3287 10.8161 10.3085 10.8161 9.24466Z"
+                      fill="#363436" />
+                    <path
+                      d="M9.35705 9.08566C9.64723 8.97345 9.93675 9.14324 9.94559 9.4609C9.97307 10.4505 9.56021 11.378 8.80679 12.0041C7.60322 13.0049 5.83401 12.9591 4.68736 11.904C4.01049 11.2815 3.65456 10.4322 3.66274 9.50343C3.66633 9.12394 3.95978 8.96494 4.29904 9.10234C4.58856 9.21914 4.97034 9.40986 5.26445 9.42491C5.69105 9.4465 5.87981 9.20932 6.25864 9.0428C6.93158 8.74739 7.421 9.04935 7.99677 9.4164C8.15184 9.5152 8.2719 9.51553 8.4502 9.44389C8.75183 9.32241 9.05411 9.203 9.35705 9.08566Z"
+                      fill="#363436" />
+                  </svg>
+                </div>
+                <span class="catalog-category__title">{{ Categoryse.name }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            {% for Categoryse in category %}
+            <div class="catalog__main" id="CatalogMenu">
+              <div class="main-catalog">
+                <div class="catalog-section catalog-section_current">
+                  <div class="catalog-section__wrapper">
+                    {% for PodCategoryss in Categoryse.pod_category.all %}
+                    <div class="catalog-section__section">
+                      <h2 class="catalog-section__title">{{ PodCategoryss.name }}</h2>
+                      <ul class="catalog-section__list">
+                        {% for Nishe in PodCategoryss.nish_category.all %}
+                        <li class="catalog-section__el">
+                          <a href="{% url 'subcategory' Nishe.id %}" class="catalog-section__link">{{ Nishe.name }}</a>
+                          <span class="catalog-section__count">540</span>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+
+      <button class="scroll-to-top">
+        <img src="/static/img/icons/arrow-top-white.svg" alt="" >
+      </button>
+
+      <div class="user-actions user-actions_main">
+        <a
+          href="index.html"
+          class="user-actions-point user-actions-point_mobile">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/home-icon.svg" alt="home" >
+          </span>
+          <h3 class="user-actions-point__title">Главная</h3>
+        </a>
+        <button
+          class="user-actions-point user-actions-point_mobile open-catalog"
+          id="MobileCatalogBtn">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/catalogue-icon.svg" alt="catalogue" >
+          </span>
+          <span class="user-actions-point__title">Каталог</span>
+        </button>
+        <a href="#" class="user-actions-point user-actions-point_num">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/equel-icon.svg" alt="comparison" >
+
+            <span class="user-actions-point__num">0</span>
+          </span>
+          <h3 class="user-actions-point__title">Сравнение</h3>
+        </a>
+        <a href="#" class="user-actions-point user-actions-point_num">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/favorite-icon.svg" alt="favorite" >
+
+            <span class="user-actions-point__num">0</span>
+          </span>
+          <h3 class="user-actions-point__title">Избранное</h3>
+        </a>
+      </div>
+    </div>
+
+    <script src="/static/js/catalog.js"></script>
+    <script src="/static/js/popup.js"></script>
+    <script src="/static/js/search.js"></script>
+    <script src="/static/js/actions.js"></script>
+    <script src="/static/js/slider-core.js"></script>
+    <script src="/static/js/scroll-control.js"></script>
+    <script src="/static/js/range.js"></script>
+  </body>
+</html>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <title>СравниPrice</title>
+    <link rel="stylesheet" href="/static/css/style.css" >
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+  const cityLinks = document.querySelectorAll('.city-link');
+  const selectedCityElement = document.getElementById('selectedCity');
+
+  cityLinks.forEach(function(cityLink) {
+    cityLink.addEventListener('click', function(event) {
+      event.preventDefault();
+      const selectedCity = this.getAttribute('data-city');
+      setCookie('selected_city', selectedCity, 10);
+      displaySelectedCity(selectedCity);
+    });
+  });
+
+  // Функция для установки куки
+  function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    const expires = 'expires=' + date.toUTCString();
+    document.cookie = name + '=' + value + ';' + expires + ';path=/';
+  }
+
+  // Функция для получения куки
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift();
+    }
+  }
+
+  // Функция для отображения выбранного города
+  function displaySelectedCity(city) {
+    if (selectedCityElement) {
+      selectedCityElement.textContent = city;
+    }
+  }
+
+  // Получаем выбранный город из куки при загрузке страницы
+  const selectedCityFromCookie = getCookie('selected_city');
+  if (selectedCityFromCookie) {
+    displaySelectedCity(selectedCityFromCookie);
+  }
+});
+    </script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <div class="header__container">
+          <div class="header__wrapper">
+            <div class="header-left">
+              <a href="{% url 'home' %}" class="logo"
+                ><img src="/static/img/logo.svg" alt="logo"
+              ></a>
+              <button class="header__button button open-catalog">
+                <span class="open-catalog__icon">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </span>
+                <span class="button__text">Каталог</span>
+              </button>
+
+              <div class="location">
+                <div class="location__icon">
+                  <img src="/static/img/icons/location-icon.svg" alt="location" >
+                </div>
+                <span class="location__text">Ваш город: </span>
+                <span class="location__lacate open-popup-location" id="selectedCity">Минск</span>
+
+                <div class="location-question popup">
+                  <div class="location-question__wrapper">
+                    <button class="popup__close-btn popup-close">
+                      <span></span>
+                      <span></span>
+                    </button>
+
+                    <h3 class="location-question__title">
+                      <span>Ваш город </span>
+                      <span class="location-question__locate">Минск?</span>
+                    </h3>
+                    <div class="location-question__buttons">
+                      <button
+                        class="location-question__button button popup-close">
+                        Да, спасибо
+                      </button>
+                      <button
+                        class="location-question__button location-question__button_grey popup-close change-city-btn">
+                        Нет, другой
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="header-search search-field">
+              <input
+                type="text"
+                class="search-field__input"
+                placeholder="Например, ноутбук Assus" >
+              <button class="search-field__button">
+                <img src="/static/img/icons/search-icon.svg" alt="search" >
+              </button>
+            </div>
+
+            <div class="user-actions">
+              <a href="{% url 'equaliz' %}" class="user-actions-point user-actions-point_num">
+                <span class="user-actions-point__icon">
+                  <img src="/static/img/icons/equel-icon.svg" alt="comparison" >
+                </span>
+                <h3 class="user-actions-point__title">Сравнение</h3>
+              </a>
+              <a href="{% url 'favorite' %}" class="user-actions-point user-actions-point_num">
+                <span class="user-actions-point__icon">
+                  <img src="/static/img/icons/favorite-icon.svg" alt="favorite" >
+                </span>
+                <h3 class="user-actions-point__title">Избранное</h3>
+              </a>
+            </div>
+
+            <div class="status-popup status-popup_green popup">
+              <div class="status-popup__wrapper">
+                <button class="popup__close-btn popup-close">
+                  <span></span>
+                  <span></span>
+                </button>
+
+                <p class="status-popup__paragraph">
+                  Товар успешно добавлен в сравнение
+                </p>
+              </div>
+            </div>
+            <div class="status-popup status-popup_red popup">
+              <div class="status-popup__wrapper">
+                <button class="popup__close-btn popup-close">
+                  <span></span>
+                  <span></span>
+                </button>
+
+                <p class="status-popup__paragraph">
+                  Ошибка! Не удалось добавить товар
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main class="main">
+        <div class="main__breadcrumbs breadcrumbs" itemscope itemtype="https://schema.org/BreadcrumbList">
+          <div class="breadcrumbs__container">
+            <div class="breadcrumbs__wrapper">
+              <span class="breadcrumbs__crumb" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a href="{% url 'home' %}" itemprop="item" itemscope itemtype="https://schema.org/WebPage">
+                  <span itemprop="name">Главная</span>
+                </a>
+                <meta itemprop="position" content="1" >
+              </span>
+              <span class="breadcrumbs__crumb" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                {% for Categoryse in category %}
+                <a href="{% url 'category' Categoryse.id %}" itemprop="item" itemscope itemtype="https://schema.org/WebPage">
+                  {% endfor %}
+                  <span itemprop="name">Категория</span>
+                </a>
+                <meta itemprop="position" content="2" >
+              </span>
+              <span class="breadcrumbs__crumb breadcrumbs__crumb_current" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <span itemprop="name">Подкатегория с товарами</span>
+                <meta itemprop="position" content="3" >
+              </span>
+            </div>
+          </div>
+        </div>
+        <section class="main__blog-main blog-main">
+          <div class="blog-main__wrapper">
+            <div class="blog-main__container">
+                <h1 class="blog-main__title title title_first">Блог</h1>
+            </div>
+
+            <div class="blog-categories">
+                <div class="blog-categories__slider slider slider-init">
+                    <div class="slider-wrapper">
+                        {% for category in categories %}
+                        <div class="slider-slide">
+                            <a href="{% url 'blog' %}?category={{ category.id }}" class="blog-category">{{ category.category }}</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <button class="blog-categories__button" title="Показать ещё">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="blog-main__container">
+              <div class="blog-main__list">
+                {% for article in articles %}
+                <div class="blog-card" itemscope itemtype="https://schema.org/Blog">
+                  <a href="{% url 'article' article.id %}" class="blog-card__preview">
+                    <img src="{{ article.image.url }}" alt="blog" itemprop="image" >
+                  </a>
+                  <a href="{% url 'article' article.id %}" class="blog-card__title"
+                    ><span itemprop="headline">{{ article.zagolovok }}
+                    </span></a
+                  >
+                  <p class="blog-card__paragraph paragraph" itemprop="description">
+                    {{ article.text|truncatechars:100 }}
+
+                  </p>
+                  <meta itemprop="url" content="#">
+                </div>
+                {% endfor %}
+              </div>
+              
+              <button class="blog-main__more-button button">Показать ещё</button>
+            </div>
+
+            <div class="blog-main__container">
+              <!-- Ваш HTML-код для отображения статей -->
+          
+              {% if page_obj.paginator.num_pages > 1 %}
+              <div class="blog-main__pagination pagination">
+
+          
+                  {% for page_num in page_obj.paginator.page_range %}
+                      {% if page_obj.number == page_num %}
+                          <div class="pagination__page pagination__page_current">{{ page_num }}</div>
+                      {% elif page_num == 1 or page_num == page_obj.paginator.num_pages or page_num|add:'-3' <= page_obj.number|add:'3' %}
+                          <a class="pagination__page" href="?page={{ page_num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ page_num }}</a>
+                      {% elif page_num == page_obj.paginator.num_pages|add:'-3' or page_num == page_obj.number|add:'3' %}
+                          <div class="pagination__dots">...</div>
+                      {% endif %}
+                  {% endfor %}
+        
+              </div>
+              {% endif %}
+          </div>
+          </div>
+        </section>
+      </main>
+      <footer class="footer">
+        <div class="footer__container">
+          <div class="footer__wrapper">
+            <a href="{% url 'home' %}" class="logo"><img src="/static/img/logo.svg" alt="logo" ></a>
+
+            <div class="footer-nav" itemscope itemtype="http://schema.org/SiteNavigationElement">
+              <ul class="footer-nav__list">
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"><span itemprop="name">О компании</span></a>
+                </li>
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"><span itemprop="name">Контакты</span></a>
+                </li>
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"><span itemprop="name">Блог</span></a>
+                </li>
+                <li class="footer-nav__el">
+                  <a href="about.html" class="footer-nav__link"
+                    ><span itemprop="name">Правовая информация</span></a
+                  >
+                </li>
+              </ul>
+            </div>
+
+            <div class="footer-social">
+              <h2 class="footer-social__title">Социальные сети:</h2>
+              <ul class="footer-social__list">
+                <li class="footer-social__el">
+                  <a href="#" class="footer-social__link">
+                    <img
+                      src="/static/img/icons/telegram-icon.svg"
+                      alt="telegram-icon" >
+                  </a>
+                </li>
+                <li class="footer-social__el">
+                  <a href="#" class="footer-social__link">
+                    <img src="/static/img/icons/dzen-icon.svg" alt="dzen-icon" >
+                  </a>
+                </li>
+                <li class="footer-social__el">
+                  <a href="#" class="footer-social__link">
+                    <img src="/static/img/icons/vk-icon.svg" alt="vk-icon" >
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <div class="cookie-popup popup">
+        <div class="cookie-popup__icon">
+          <img src="/static/img/icons/cookie.png" alt="accept cookies" >
+        </div>
+        <p class="cookie-popup__paragraph">
+          Используя данный сайт, Вы даете согласие на использование файлов
+          cookie и других технологий, чтобы помочь Вам в навигации, а также
+          предоставить лучший пользовательский опыт. Подробнее:
+          <a href="#">Политика конфиденциальности</a>
+        </p>
+        <span></span>
+        <button class="cookie-popup__button popup-close">Принимаю</button>
+      </div>
+
+      <div class="change-location-parrent popup">
+        <div class="change-location">
+          <div class="change-location__wrapper">
+            <button class="popup__close-btn popup-close">
+              <span></span>
+              <span></span>
+            </button>
+
+            <h2 class="change-location__title title title_second">
+              Выберите город
+            </h2>
+            <div class="search-field" id="LocationSearch">
+              <input
+                type="text"
+                class="search-field__input"
+                id="LocInput"
+                placeholder="Найти город" >
+              <button class="search-field__button" id="searchLocationsBtn">
+                <img src="/static/img/icons/search-icon.svg" alt="search" >
+              </button>
+            </div>
+
+            <ul class="change-location__list">
+              {% for city in cities %}
+              <li>
+                <a href="#" class="city-link" data-city="{{ city.city }}">{{ city.city }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+
+            <p class="change-location__error-text">
+              Населенных пунктов с похожим названием не найдено, попробуйте
+              изменить запрос
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="catalog">
+        <div class="catalog__container">
+          <h2 class="catalog__title">Каталог товаров</h2>
+          <div class="catalog__body">
+            <div class="catalog__categories">
+              {% for Categoryse in category %}
+                <div class="catalog-category" data-category-id="{{ Categoryse.id }}"> 
+                  <div class="catalog-category__icon">
+                    <svg
+                      width="14"
+                      height="15"
+                      viewBox="0 0 14 15"
+                      fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M11.7285 0.00049072C12.6194 0.00049072 13.4029 0.678011 13.571 1.55084C13.5952 1.67734 13.6079 1.89456 13.609 2.20251C13.6103 2.62432 13.6103 3.04623 13.609 3.46824C13.609 3.4725 13.6073 3.47657 13.6043 3.47958C13.6013 3.48259 13.5972 3.48427 13.5929 3.48427H0.0170145C0.0125895 3.48427 0.00834585 3.48252 0.0052169 3.47939C0.00208796 3.47626 0.000330121 3.47202 0.000330121 3.46759C0.000548219 3.05473 0.000439225 2.64035 3.02916e-06 2.22443C-0.000215069 1.91997 0.011344 1.70274 0.0346805 1.57276C0.169465 0.826209 0.747533 0.215426 1.49343 0.0466184C1.62887 0.0160847 1.83017 0.000708818 2.09734 0.00049072C5.30774 -0.000163573 8.51814 -0.000163573 11.7285 0.00049072ZM3.53417 2.39095C4.04779 2.17045 3.86884 1.39414 3.29601 1.39217C2.92873 1.39108 2.69776 1.39359 2.60311 1.3997C1.90171 1.4455 1.92624 2.43741 2.68326 2.43741C2.93189 2.43741 3.33068 2.4783 3.53417 2.39095ZM6.22266 2.15802C6.40193 1.78573 6.14382 1.39904 5.73325 1.39283C5.37164 1.38737 5.14351 1.38705 5.04886 1.39185C4.47897 1.42129 4.33764 2.20382 4.87907 2.40535C4.93599 2.4265 5.02181 2.43719 5.13653 2.43741C5.48069 2.43839 6.04076 2.5362 6.22266 2.15802Z"
+                      fill="#363436" />
+                    <path
+                      d="M1.5484 14.9635C0.799884 14.8189 0.201533 14.2248 0.0441753 13.4815C0.0153864 13.3467 0.000991947 13.1296 0.000991947 12.8302C0.000119556 10.0747 1.0437e-05 7.31645 0.00066473 4.55534C0.00066473 4.54892 0.00321538 4.54276 0.00775542 4.53822C0.0122955 4.53368 0.0184531 4.53113 0.0248736 4.53113H13.5933C13.5978 4.53113 13.6021 4.53292 13.6053 4.53611C13.6085 4.5393 13.6103 4.54363 13.6103 4.54814C13.6099 7.38079 13.6083 10.2158 13.6057 13.0533C13.6047 13.9713 13.0038 14.7535 12.1116 14.9537C11.9766 14.984 11.7787 14.9993 11.5179 14.9995C8.41193 15.0001 5.30611 15.0001 2.2004 14.9995C1.8907 14.9995 1.67337 14.9875 1.5484 14.9635ZM10.8161 9.24466C10.8161 8.18083 10.3935 7.16058 9.6413 6.40835C8.88906 5.65611 7.86881 5.23351 6.80499 5.23351C5.74117 5.23351 4.72092 5.65611 3.96868 6.40835C3.21644 7.16058 2.79384 8.18083 2.79384 9.24466C2.79384 10.3085 3.21644 11.3287 3.96868 12.081C4.72092 12.8332 5.74117 13.2558 6.80499 13.2558C7.86881 13.2558 8.88906 12.8332 9.6413 12.081C10.3935 11.3287 10.8161 10.3085 10.8161 9.24466Z"
+                      fill="#363436" />
+                    <path
+                      d="M9.35705 9.08566C9.64723 8.97345 9.93675 9.14324 9.94559 9.4609C9.97307 10.4505 9.56021 11.378 8.80679 12.0041C7.60322 13.0049 5.83401 12.9591 4.68736 11.904C4.01049 11.2815 3.65456 10.4322 3.66274 9.50343C3.66633 9.12394 3.95978 8.96494 4.29904 9.10234C4.58856 9.21914 4.97034 9.40986 5.26445 9.42491C5.69105 9.4465 5.87981 9.20932 6.25864 9.0428C6.93158 8.74739 7.421 9.04935 7.99677 9.4164C8.15184 9.5152 8.2719 9.51553 8.4502 9.44389C8.75183 9.32241 9.05411 9.203 9.35705 9.08566Z"
+                      fill="#363436" />
+                  </svg>
+                </div>
+                <span class="catalog-category__title">{{ Categoryse.name }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            {% for Categoryse in category %}
+            <div class="catalog__main" id="CatalogMenu">
+              <div class="main-catalog">
+                <div class="catalog-section catalog-section_current">
+                  <div class="catalog-section__wrapper">
+                    {% for PodCategoryss in Categoryse.pod_category.all %}
+                    <div class="catalog-section__section">
+                      <h2 class="catalog-section__title">{{ PodCategoryss.name }}</h2>
+                      <ul class="catalog-section__list">
+                        {% for Nishe in PodCategoryss.nish_category.all %}
+                        <li class="catalog-section__el">
+                          <a href="{% url 'subcategory' Nishe.id %}" class="catalog-section__link">{{ Nishe.name }}</a>
+                          <span class="catalog-section__count">540</span>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+
+      <button class="scroll-to-top">
+        <img src="/static/img/icons/arrow-top-white.svg" alt="" >
+      </button>
+
+      <div class="user-actions user-actions_main">
+        <a
+          href="index.html"
+          class="user-actions-point user-actions-point_mobile">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/home-icon.svg" alt="home" >
+          </span>
+          <h3 class="user-actions-point__title">Главная</h3>
+        </a>
+        <button
+          class="user-actions-point user-actions-point_mobile open-catalog"
+          id="MobileCatalogBtn">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/catalogue-icon.svg" alt="catalogue" >
+          </span>
+          <span class="user-actions-point__title">Каталог</span>
+        </button>
+        <a href="#" class="user-actions-point user-actions-point_num">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/equel-icon.svg" alt="comparison" >
+
+            <span class="user-actions-point__num">0</span>
+          </span>
+          <h3 class="user-actions-point__title">Сравнение</h3>
+        </a>
+        <a href="#" class="user-actions-point user-actions-point_num">
+          <span class="user-actions-point__icon">
+            <img src="/static/img/icons/favorite-icon.svg" alt="favorite" >
+
+            <span class="user-actions-point__num">0</span>
+          </span>
+          <h3 class="user-actions-point__title">Избранное</h3>
+        </a>
+      </div>
+    </div>
+
+    <script src="/static/js/catalog.js"></script>
+    <script src="/static/js/popup.js"></script>
+    <script src="/static/js/search.js"></script>
+    <script src="/static/js/slider-core.js"></script>
+    <script src="/static/js/scroll-control.js"></script>
+    <script src="/static/js/actions.js"></script>
+  </body>
+</html>
